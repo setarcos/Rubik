@@ -112,7 +112,7 @@ int main( void )
 	glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
 	// Camera matrix
 	glm::mat4 View = glm::lookAt(
-                    glm::vec3(4,3,3), // Camera is at (4,3,3), in World Space
+                    glm::vec3(3,2.5,3.5), // Camera position, in World Space
                     glm::vec3(0,0,0), // and looks at the origin
                     glm::vec3(0,1,0)  // Head is up
 						   );
@@ -137,6 +137,14 @@ int main( void )
         glm::vec3(0, 0, -1),
     };
     bool rotating = false;
+    int control_keys[] = {
+        GLFW_KEY_U, GLFW_KEY_D, GLFW_KEY_L, GLFW_KEY_R,
+        GLFW_KEY_F, GLFW_KEY_B, GLFW_KEY_A, GLFW_KEY_W,
+    };
+    unsigned char key_idx[2][4] = {
+        {2, 5, 3, 4},  // L, B, R, F
+        {4, 1, 5, 0},  // F, D, B, U
+    };
 
     // Use our shader
     glUseProgram(programID);
@@ -147,45 +155,51 @@ int main( void )
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if (rotating) {
-            if (angle < glm::radians(90.0f)) {
-                angle += speed;
-                glm::mat4 rotate_speed = glm::rotate(glm::mat4(1.0f),
-                        speed, dir[step]);
-                for (int i = 0; i < 9; ++i)
-                    cube[cubeidx[cubeface[step][i]]]->AddAngle(rotate_speed);
-            }
-            else {
-                rotating = false;
-                angle = 0;
-                for (int i = 0; i < 9; ++i)
-                    cube[cubeidx[cubeface[step][i]]]->FitAngle();
-                rotate_cube(cubeidx, cubeface[step]);
+            if (step > 5) { // Rotate the whole cube
+                if (angle < glm::radians(90.0f)) {
+                    angle += speed;
+                    glm::mat4 rotate_speed = glm::rotate(glm::mat4(1.0f),
+                        speed, dir[step - 5]);
+                    for (int i = 0; i < 26; ++i)
+                        cube[i]->AddAngle(rotate_speed);
+                } else {
+                    rotating = false;
+                    angle = 0;
+                    for (int i = 0; i < 26; ++i)
+                        cube[i]->FitAngle();
+                    int tmp = control_keys[key_idx[step - 6][0]];
+                    for (int i = 0; i < 3; ++i)
+                        control_keys[key_idx[step - 6][i]] =
+                            control_keys[key_idx[step - 6][i + 1]];
+                    control_keys[key_idx[step - 6][3]] = tmp;
+                    glm::vec3 tmpdir = dir[key_idx[step - 6][0]];
+                    for (int i = 0; i < 3; ++i)
+                        dir[key_idx[step - 6][i]] =
+                            dir[key_idx[step - 6][i + 1]];
+                    dir[key_idx[step - 6][3]] = tmpdir;
+                }
+            } else {  // if (step > 5)
+                if (angle < glm::radians(90.0f)) {
+                    angle += speed;
+                    glm::mat4 rotate_speed = glm::rotate(glm::mat4(1.0f),
+                            speed, dir[step]);
+                    for (int i = 0; i < 9; ++i)
+                        cube[cubeidx[cubeface[step][i]]]->AddAngle(rotate_speed);
+                } else {
+                    rotating = false;
+                    angle = 0;
+                    for (int i = 0; i < 9; ++i)
+                        cube[cubeidx[cubeface[step][i]]]->FitAngle();
+                    rotate_cube(cubeidx, cubeface[step]);
+                }
             }
         } else {
-            if (glfwGetKey( window, GLFW_KEY_U ) == GLFW_PRESS){
-                step = 0;
-                rotating = true;
-            }
-            if (glfwGetKey( window, GLFW_KEY_D ) == GLFW_PRESS){
-                step = 1;
-                rotating = true;
-            }
-            if (glfwGetKey( window, GLFW_KEY_L ) == GLFW_PRESS){
-                step = 2;
-                rotating = true;
-            }
-            if (glfwGetKey( window, GLFW_KEY_R ) == GLFW_PRESS){
-                step = 3;
-                rotating = true;
-            }
-            if (glfwGetKey( window, GLFW_KEY_F ) == GLFW_PRESS){
-                step = 4;
-                rotating = true;
-            }
-            if (glfwGetKey( window, GLFW_KEY_B ) == GLFW_PRESS){
-                step = 5;
-                rotating = true;
-            }
+            for (int i = 0; i < 8; ++i)
+                if (glfwGetKey( window, control_keys[i]) == GLFW_PRESS){
+                    step = i;
+                    rotating = true;
+                    break;
+                }
         }
 
         for (int i = 0; i < 26; ++i)
