@@ -8,7 +8,7 @@ class OneCube
         GLuint cbo;
         float px, py, pz;
         glm::mat4 angle;
-        GLuint matrix;
+        GLuint theta;
 
         float fit(float f);
     public:
@@ -16,7 +16,7 @@ class OneCube
         ~OneCube(void);
 
         void Init(GLuint m);
-        void Render(const glm::mat4& mvp);
+        void Render();
         void AddAngle(const glm::mat4& a);
         void FitAngle(void);
 };

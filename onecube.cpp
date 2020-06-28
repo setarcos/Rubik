@@ -4,7 +4,7 @@
 #include <cstdio>
 
 OneCube::OneCube(float x, float y, float z): vbo(0), cbo(0),
-    px(x), py(y), pz(z), angle(glm::mat4(1.0f))
+    px(x), py(y), pz(z), angle(glm::mat4(1.0f)), theta(0)
 {
 }
 
@@ -16,7 +16,7 @@ OneCube::~OneCube(void)
 
 void OneCube::Init(GLuint m)
 {
-    matrix = m;
+    theta = m;
 	GLfloat vertices[] = { 
 		-0.29f,-0.29f,-0.29f,
 		-0.29f,-0.29f, 0.29f,
@@ -91,12 +91,9 @@ void OneCube::Init(GLuint m)
 	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
 }
 
-void OneCube::Render(const glm::mat4& mvp)
+void OneCube::Render()
 {
-    glm::mat4 tmpmvp = mvp * angle;
-    // Send our transformation to the currently bound shader, 
-    // in the "MVP" uniform
-    glUniformMatrix4fv(matrix, 1, GL_FALSE, &tmpmvp[0][0]);
+    glUniformMatrix4fv(theta, 1, GL_FALSE, &angle[0][0]);
 
     // 1rst attribute buffer : vertices
     glEnableVertexAttribArray(0);

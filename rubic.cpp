@@ -90,7 +90,7 @@ int main( void )
 	//glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_FALSE);
 
 	// Dark blue background
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
@@ -106,6 +106,7 @@ int main( void )
 
 	// Get a handle for our "MVP" uniform
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
+    GLuint RID = glGetUniformLocation(programID, "R");
 
 	// Projection matrix : 45? Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
 	glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
@@ -123,7 +124,7 @@ int main( void )
     for (int i = 0; i < 26; ++i) {
         cube[i] = new OneCube(cubepos[i * 3] * 0.6,
                 cubepos[i * 3 + 1] * 0.6, cubepos[i * 3 + 2] * 0.6);
-        cube[i]->Init(MatrixID);
+        cube[i]->Init(RID);
     }
     GLfloat angle = 0;
     int step = 0;
@@ -140,6 +141,7 @@ int main( void )
     // Use our shader
     glUseProgram(programID);
 
+    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 	do{
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -187,7 +189,7 @@ int main( void )
         }
 
         for (int i = 0; i < 26; ++i)
-            cube[i]->Render(MVP);
+            cube[i]->Render();
 		// Swap buffers
 		glfwSwapBuffers(window);
 		glfwPollEvents();
