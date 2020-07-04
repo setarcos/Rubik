@@ -53,7 +53,7 @@ int main( void )
         {6, 7, 8, 16, 25, 24, 23, 14, 15}, // Front
         {17, 18, 19, 11, 2, 1, 0, 9, 10}, // Back
     };
-    const float speed = glm::radians(2.0f);
+    const float speed = glm::radians(3.8f);
 	// Initialise GLFW
 	if( !glfwInit() )
 	{
@@ -141,10 +141,13 @@ int main( void )
         GLFW_KEY_U, GLFW_KEY_D, GLFW_KEY_L, GLFW_KEY_R,
         GLFW_KEY_F, GLFW_KEY_B, GLFW_KEY_A, GLFW_KEY_W,
     };
-    unsigned char key_idx[2][4] = {
-        {2, 5, 3, 4},  // L, B, R, F
+    unsigned char key_idx[4][4] = {
+        {4, 3, 5, 2},  // F, R, B, L
         {4, 1, 5, 0},  // F, D, B, U
+        {2, 5, 3, 4},  // L, B, R, F
+        {0, 5, 1, 4},  // U, B, D, F
     };
+    char ccw = 1;
 
     // Use our shader
     glUseProgram(programID);
@@ -159,7 +162,7 @@ int main( void )
                 if (angle < glm::radians(90.0f)) {
                     angle += speed;
                     glm::mat4 rotate_speed = glm::rotate(glm::mat4(1.0f),
-                        speed, dir[step - 5]);
+                        speed * ccw, dir[step - 5]);
                     for (int i = 0; i < 26; ++i)
                         cube[i]->AddAngle(rotate_speed);
                 } else {
@@ -167,22 +170,23 @@ int main( void )
                     angle = 0;
                     for (int i = 0; i < 26; ++i)
                         cube[i]->FitAngle();
-                    int tmp = control_keys[key_idx[step - 6][0]];
+                    // After rotation, Left becomes Back, ... , etc.
+                    int tmp = control_keys[key_idx[step - 5 + ccw][0]];
                     for (int i = 0; i < 3; ++i)
-                        control_keys[key_idx[step - 6][i]] =
-                            control_keys[key_idx[step - 6][i + 1]];
-                    control_keys[key_idx[step - 6][3]] = tmp;
-                    glm::vec3 tmpdir = dir[key_idx[step - 6][0]];
+                        control_keys[key_idx[step - 5 + ccw][i]] =
+                            control_keys[key_idx[step - 5 + ccw][i + 1]];
+                    control_keys[key_idx[step- 5 + ccw][3]] = tmp;
+                    glm::vec3 tmpdir = dir[key_idx[step - 5 + ccw][0]];
                     for (int i = 0; i < 3; ++i)
-                        dir[key_idx[step - 6][i]] =
-                            dir[key_idx[step - 6][i + 1]];
-                    dir[key_idx[step - 6][3]] = tmpdir;
+                        dir[key_idx[step - 5 + ccw][i]] =
+                            dir[key_idx[step - 5 + ccw][i + 1]];
+                    dir[key_idx[step - 5 + ccw][3]] = tmpdir;
                 }
             } else {  // if (step > 5)
                 if (angle < glm::radians(90.0f)) {
                     angle += speed;
                     glm::mat4 rotate_speed = glm::rotate(glm::mat4(1.0f),
-                            speed, dir[step]);
+                            speed * ccw, dir[step]);
                     for (int i = 0; i < 9; ++i)
                         cube[cubeidx[cubeface[step][i]]]->AddAngle(rotate_speed);
                 } else {
@@ -191,6 +195,10 @@ int main( void )
                     for (int i = 0; i < 9; ++i)
                         cube[cubeidx[cubeface[step][i]]]->FitAngle();
                     rotate_cube(cubeidx, cubeface[step]);
+                    if (ccw == -1) {
+                        rotate_cube(cubeidx, cubeface[step]);
+                        rotate_cube(cubeidx, cubeface[step]);
+                    }
                 }
             }
         } else {
@@ -198,8 +206,12 @@ int main( void )
                 if (glfwGetKey( window, control_keys[i]) == GLFW_PRESS){
                     step = i;
                     rotating = true;
+                    ccw = 1;  // Counter Clock Wise
                     break;
                 }
+            if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+                ccw = -1;   // Clock Wise
+            }
         }
 
         for (int i = 0; i < 26; ++i)
