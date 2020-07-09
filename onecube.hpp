@@ -5,7 +5,6 @@ class OneCube
 {
     private:
         GLuint vbo;
-        GLuint cbo;
         float px, py, pz;
         glm::mat4 angle;
         GLuint theta;
