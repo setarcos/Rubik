@@ -108,6 +108,12 @@ int main( void )
 	GLuint MatrixID = glGetUniformLocation(programID, "MVP");
     GLuint RID = glGetUniformLocation(programID, "R");
 
+    GLuint Texture = loadBMP_custom("r.bmp");
+    GLuint TextID = glGetUniformLocation(programID, "mySampler");
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, Texture);
+    glUniform1i(TextID, 0);
+
 	// Projection matrix : 45? Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
 	glm::mat4 Projection = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
 	// Camera matrix

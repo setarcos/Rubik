@@ -46,7 +46,7 @@ void OneCube::Init(GLuint m)
         1.0f, 1.0f, 1.0f, // White
         1.0f, 1.0f, 0.0f, // Yellow
     };
-    static const float CS = 0.25f;
+    static const float CS = 0.29f;
 
     for (int i = 0; i < 6; ++i) {
         for (int j = 0; j < 6; ++j) {
@@ -56,6 +56,29 @@ void OneCube::Init(GLuint m)
             for (int k = 0; k < 3; ++ k)
                 vbodata[i * 36 + j * 6 + 3 + k] = basec[i * 3 + k];
         }
+    }
+
+    /* Embed texture UV coordinate in the color attribute. */
+    if ((px == 0) && (abs(py - 0.6) < 0.1) && (pz == 0)) {
+        vbodata[8 * 18 + 3] = 2.0f;
+        vbodata[8 * 18 + 4] = 1.0f;
+        vbodata[8 * 18 + 5] = 0.0f;
+        vbodata[8 * 18 + 9] = 2.0f;
+        vbodata[8 * 18 + 10] = 1.0f;
+        vbodata[8 * 18 + 11] = 1.0f;
+        vbodata[8 * 18 + 15] = 2.0f;
+        vbodata[8 * 18 + 16] = 0.0f;
+        vbodata[8 * 18 + 17] = 1.0f;
+
+        vbodata[9 * 18 + 3] = 2.0f;
+        vbodata[9 * 18 + 4] = 1.0f;
+        vbodata[9 * 18 + 5] = 0.0f;
+        vbodata[9 * 18 + 9] = 2.0f;
+        vbodata[9 * 18 + 10] = 0.0f;
+        vbodata[9 * 18 + 11] = 1.0f;
+        vbodata[9 * 18 + 15] = 2.0f;
+        vbodata[9 * 18 + 16] = 0.0f;
+        vbodata[9 * 18 + 17] = 0.0f;
     }
 
 	glGenBuffers(1, &vbo);
