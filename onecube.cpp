@@ -16,25 +16,25 @@ OneCube::~OneCube(void)
 void OneCube::Init(GLuint m)
 {
     theta = m;
-	static char vertices[] = {
-		-1,-1,-1, -1,-1, 1, -1, 1, 1,
-		-1,-1,-1, -1, 1, 1, -1, 1,-1, // Left
+    static char vertices[] = {
+        -1,-1,-1, -1,-1, 1, -1, 1, 1,
+        -1,-1,-1, -1, 1, 1, -1, 1,-1, // Left
 
-		 1, 1, 1, 1,-1,-1, 1, 1,-1,
-		 1,-1,-1, 1, 1, 1, 1,-1, 1, // Right
+         1, 1, 1, 1,-1,-1, 1, 1,-1,
+         1,-1,-1, 1, 1, 1, 1,-1, 1, // Right
 
-		 1, 1,-1, -1,-1,-1, -1, 1,-1,
-		 1, 1,-1, 1,-1,-1, -1,-1,-1, // Back
+         1, 1,-1, -1,-1,-1, -1, 1,-1,
+         1, 1,-1, 1,-1,-1, -1,-1,-1, // Back
 
-		-1, 1, 1, -1,-1, 1, 1,-1, 1,
-		 1, 1, 1, -1, 1, 1, 1,-1, 1, // Front
+        -1, 1, 1, -1,-1, 1, 1,-1, 1,
+         1, 1, 1, -1, 1, 1, 1,-1, 1, // Front
 
-		 1, 1, 1, 1, 1,-1, -1, 1,-1,
-		 1, 1, 1, -1, 1,-1, -1, 1, 1, // Top
+         1, 1, 1, 1, 1,-1, -1, 1,-1,
+         1, 1, 1, -1, 1,-1, -1, 1, 1, // Top
 
-		 1,-1, 1, -1,-1,-1, 1,-1,-1,
-		 1,-1, 1, -1,-1, 1, -1,-1,-1, // Bottom
-	};
+         1,-1, 1, -1,-1,-1, 1,-1,-1,
+         1,-1, 1, -1,-1, 1, -1,-1,-1, // Bottom
+    };
 
     GLfloat vbodata[12 * 3 * 6];
     static const GLfloat basec[] =
@@ -81,9 +81,9 @@ void OneCube::Init(GLuint m)
         vbodata[9 * 18 + 17] = 0.0f;
     }
 
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vbodata), vbodata, GL_STATIC_DRAW);
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vbodata), vbodata, GL_STATIC_DRAW);
 }
 
 void OneCube::Render()
